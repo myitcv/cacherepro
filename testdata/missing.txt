@@ -1,0 +1,30 @@
+! go generate -tags noflag
+cmp stderr fail.txt
+
+go generate -tags flag
+cmp stderr silent.txt
+
+-- go.mod --
+module mod
+
+-- noflag.go --
+// +build noflag
+
+package mod
+
+//go:generate consttofile myfile_txt
+
+-- flag.go --
+// +build flag
+
+package mod
+
+//go:generate consttofile -silent myfile_txt
+
+-- fail.txt --
+failed to find const myfile_txt
+
+noflag.go:5: running "consttofile": exit status 1
+-- silent.txt --
+failed to find const myfile_txt
+
